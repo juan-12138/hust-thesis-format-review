@@ -1,0 +1,7 @@
+interface:
+  display_name: "华中科技大学硕士论文格式审查"
+  short_description: "依据华中科技大学理工科硕士模板审查 Word 论文格式"
+  default_prompt: "Use $hust-thesis-format-review to review this HUST master thesis DOCX against the bundled template."
+
+policy:
+  allow_implicit_invocation: true

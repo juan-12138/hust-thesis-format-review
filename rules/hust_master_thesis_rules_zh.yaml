@@ -1,0 +1,1470 @@
+规则模型版本: 1.0.0
+规则集编号: hust-master-thesis-science-engineering-2021-phase1
+名称: 华中科技大学理工科硕士学位论文格式规则模型
+阶段: 阶段1规则模型，阶段2确认稿
+语言: 简体中文
+默认模式: 只审查，不自动修改论文
+标准模板:
+  文件: references/华中科技大学硕士学位论文参考模板.docx
+  SHA256: 43DB10A8AFB05D346F84B9A7C08A7E811667D27660CC0018B7C047115674B9C1
+  分析日期: '2026-09-12'
+规则来源优先级:
+- 等级: 1
+  名称: 模板正文明确写出的要求
+  处理原则: 优先级最高；强制性措辞按错误检查，建议性措辞一般按警告处理。
+- 等级: 2
+  名称: 模板中可明确识别的正确示例
+  处理原则: 模板正文未规定时使用，不得覆盖一级来源。
+- 等级: 3
+  名称: Word 样式或 OOXML 属性
+  处理原则: 作为实现证据和缺省值，必须解析继承和直接格式。
+- 等级: 4
+  名称: 有记录的上下文推断
+  处理原则: 不得表述成学校明确规定。
+严重程度说明:
+  ERROR: 错误：明确违反学校模板的强制要求，或 DOCX 结构无效。
+  WARNING: 警告：建议性要求、疑似问题、边界情况或规则来源存在冲突。
+  MANUAL_REVIEW: 人工复核：必须结合渲染效果、语义、学术内容或上下文判断。
+  PASS: 通过：已完成检查且符合要求。
+自动化程度说明:
+  AUTOMATIC: 自动检查：可以从 DOCX/OOXML 稳定、确定地判断。
+  SEMI_AUTOMATIC: 半自动检查：程序能够定位候选问题，但需要上下文或人工确认。
+  MANUAL_REVIEW: 人工检查：不能仅凭 OOXML 得出可靠结论。
+有效格式解析顺序:
+  run_properties:
+  - 文字直接格式
+  - 字符样式
+  - 段落样式
+  - 样式 basedOn 继承链
+  - 适用时的表格样式
+  - 文档默认值
+  - 主题字体或颜色回退
+  paragraph_properties:
+  - 段落直接格式
+  - 段落样式
+  - 样式 basedOn 继承链
+  - 适用时的表格样式
+  - 文档默认值
+  notes:
+  - 中文、英文/数字和复杂文字字体必须分别解析。
+  - 不能把样式名称直接当作最终有效格式。
+  - 页脚可能通过制表位实现视觉居中，不能只读取段落对齐属性。
+通用批注模板: '【格式审查：{rule_id}】
+
+  问题：{problem}
+
+  当前：{actual}
+
+  要求：{expected}
+
+  依据：{source}
+
+  建议：{suggestion}
+
+  严重程度：{severity}'
+已记录冲突:
+- 冲突编号: CONFLICT-TOC-001
+  主题: 目录字号
+  冲突证据: 模板正文要求四号（14 磅）、固定值 25 磅；模板 TOC 1/TOC 2 样式实际保存为 10 磅。
+  处理原则: 执行一级来源的 14 磅和固定值 25 磅；保留 10 磅样式事实并在报告中说明。
+- 冲突编号: CONFLICT-EQ-001
+  主题: 公式编号形式
+  冲突证据: 文字说明采用按章编号并出现“2-3”，可见示例为“(2.1)”。
+  处理原则: 必须按章连续编号；优先接受“(2-3)”，点号、短横线和圆括号差异按警告或人工复核处理。
+- 冲突编号: CONFLICT-HF-001
+  主题: 页眉字体、字号和颜色
+  冲突证据: 正文明确写明楷体、小二（18 磅），实际页眉 XML 为华文楷体、16.5 磅、红色并带红色双线。
+  处理原则: 字体和字号执行一级文字要求；红色文字和双线作为模板外观要求检查，同时披露冲突。
+- 冲突编号: CONFLICT-FOOTER-001
+  主题: 页码对齐方式
+  冲突证据: 页码视觉居中，但 Footer 样式为左对齐，实际通过制表位定位。
+  处理原则: 按最终有效位置判断居中，不能只检查段落的 w:jc 属性。
+规则:
+- 规则编号: PKG-001
+  规则名称: DOCX 文件结构完整性
+  类别: 文档完整性
+  检查对象: DOCX 文件结构完整性
+  适用范围: 整篇文档
+  标准要求: 文件必须是结构有效的 DOCX，至少包含内容类型清单和主文档 XML。
+  技术预期值:
+    format: valid OPC/OOXML DOCX
+    required_core_parts:
+    - '[Content_Types].xml'
+    - word/document.xml
+  容差与例外: 严格按规则执行，不允许无依据的偏差。
+  技术容差: none
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 四级来源：有记录的实现推断；文档无损或实现约束
+  检查方法: 解析 DOCX/OOXML，计算最终有效属性，并与本规则的标准要求自动比较。
+  自动化程度: 自动检查
+  自动化代码: AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: PKG-002
+  规则名称: 审查前后内容无损
+  类别: 文档完整性
+  检查对象: 审查前后内容无损
+  适用范围: 整篇文档及所有 OOXML 部件
+  标准要求: 除新增批注所需结构外，不得丢失或破坏域、书签、超链接、脚注、尾注、图片、公式、内容控件、修订、批注、分页符、分节符和关系。
+  技术预期值: Preserve fields, bookmarks, hyperlinks, notes, drawings, content controls, tracked changes, comments, section breaks, and relationships during review output.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: No unintended loss or relationship breakage.
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 用户明确需求；文档无损或实现约束
+  检查方法: 解析 DOCX/OOXML，计算最终有效属性，并与本规则的标准要求自动比较。
+  自动化程度: 自动检查
+  自动化代码: AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: PAGE-001
+  规则名称: 纸张尺寸与方向
+  类别: 页面设置
+  检查对象: 纸张尺寸与方向
+  适用范围: 所有节
+  标准要求: 纸张为 A4，宽约 8.27 英寸、高约 11.69 英寸，纵向。
+  技术预期值:
+    paper: A4
+    width_inches: 8.27
+    height_inches: 11.69
+    orientation: portrait
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差:
+    twips: 20
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 三级来源：Word 样式或 OOXML
+  检查方法: 解析 DOCX/OOXML，计算最终有效属性，并与本规则的标准要求自动比较。
+  自动化程度: 自动检查
+  自动化代码: AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: PAGE-002
+  规则名称: 页边距
+  类别: 页面设置
+  检查对象: 页边距
+  适用范围: 所有节
+  标准要求: 上边距约 1.77 英寸，下、左、右边距均约 1.10 英寸。
+  技术预期值:
+    top_inches: 1.77
+    bottom_inches: 1.1
+    left_inches: 1.1
+    right_inches: 1.1
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差:
+    twips: 20
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 三级来源：Word 样式或 OOXML
+  检查方法: 解析 DOCX/OOXML，计算最终有效属性，并与本规则的标准要求自动比较。
+  自动化程度: 自动检查
+  自动化代码: AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: PAGE-003
+  规则名称: 页眉页脚距边界
+  类别: 页面设置
+  检查对象: 页眉页脚距边界
+  适用范围: 所有节
+  标准要求: 页眉距边界约 42.55 磅，页脚距边界约 48.2 磅。
+  技术预期值:
+    header_distance_pt: 42.55
+    footer_distance_pt: 48.2
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差:
+    twips: 20
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 三级来源：Word 样式或 OOXML
+  检查方法: 解析 DOCX/OOXML，计算最终有效属性，并与本规则的标准要求自动比较。
+  自动化程度: 自动检查
+  自动化代码: AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: PAGE-004
+  规则名称: 分节与分页效果
+  类别: 页面设置
+  检查对象: 分节与分页效果
+  适用范围: 前置部分、正文和附录之间
+  标准要求: 分节符应正确支持页眉页脚和页码体系切换，不得造成非预期空白页。
+  技术预期值: Section boundaries must support the intended header/footer and numbering transitions without accidental blank pages.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Context dependent.
+  严重程度: 人工复核
+  严重程度代码: MANUAL_REVIEW
+  规则依据: 二级来源：模板中可识别的示例
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: HF-001
+  规则名称: 页眉文字字体与字号
+  类别: 页眉页脚
+  检查对象: 页眉文字字体与字号
+  适用范围: 需要论文页眉的正文节
+  标准要求: 页眉文字为“华中科技大学硕士学位论文”，中文楷体、小二（18 磅）；模板 XML 中的华文楷体 16.5 磅属于已记录冲突。
+  技术预期值:
+    east_asian_font: 楷体
+    size_pt: 18
+    text: 华中科技大学硕士学位论文
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差:
+    font_aliases_for_detection:
+    - 楷体_GB2312
+    - 华文楷体
+    size_pt: 0.25
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；二级来源：模板中可识别的示例；模板段落 P131；关联冲突 CONFLICT-HF-001
+  检查方法: 解析 DOCX/OOXML，计算最终有效属性，并与本规则的标准要求自动比较。
+  自动化程度: 自动检查
+  自动化代码: AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: HF-002
+  规则名称: 页眉颜色与双线
+  类别: 页眉页脚
+  检查对象: 页眉颜色与双线
+  适用范围: 正文页眉
+  标准要求: 按照模板实际外观检查红色页眉文字及红色双线；颜色应换算为 RGB 后比较，线条几何效果需渲染复核。
+  技术预期值:
+    text_color: FF0000
+    rule_color: FF0000
+    rule_count: 2
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Equivalent RGB red accepted; rule geometry needs render confirmation.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 二级来源：模板中可识别的示例；关联冲突 CONFLICT-HF-001
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: HF-003
+  规则名称: 页脚页码居中
+  类别: 页眉页脚
+  检查对象: 页脚页码居中
+  适用范围: 所有需要页码的节
+  标准要求: 页脚包含 PAGE 域，最终视觉位置居中；允许通过制表位而不是段落居中属性实现。
+  技术预期值:
+    field: PAGE
+    visual_alignment: center
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Centering may be implemented through tabs rather than paragraph alignment.
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 二级来源：模板中可识别的示例；关联冲突 CONFLICT-FOOTER-001
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: HF-004
+  规则名称: 页眉页脚节间链接
+  类别: 页眉页脚
+  检查对象: 页眉页脚节间链接
+  适用范围: 所有节
+  标准要求: 链接到前一节的状态必须符合前置部分与正文的切换意图，不得错误继承页眉或页脚。
+  技术预期值: Link-to-previous state must match the intended front-matter/main-matter transition; no accidental inherited header or footer.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Context dependent.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 三级来源：Word 样式或 OOXML
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: COVER-001
+  规则名称: 中文封面题目
+  类别: 封面
+  检查对象: 中文封面题目
+  适用范围: 中文封面题目
+  标准要求: 中文宋体、英文 Times New Roman、一号（26 磅）、加粗，题目不超过 30 个汉字。
+  技术预期值:
+    east_asian_font: 宋体
+    latin_font: Times New Roman
+    size_pt: 26
+    bold: true
+    max_chinese_characters: 30
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差:
+    size_pt: 0.25
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；模板段落 P009/P129
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: COVER-002
+  规则名称: 英文题目
+  类别: 封面
+  检查对象: 英文题目
+  适用范围: 英文题名页
+  标准要求: Times New Roman、小二（18 磅），实词首字母大写。
+  技术预期值:
+    font: Times New Roman
+    size_pt: 18
+    significant_words_initial_capital: true
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差:
+    size_pt: 0.25
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；模板段落 P023
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: COVER-003
+  规则名称: 英文页作者姓名顺序
+  类别: 封面
+  检查对象: 英文页作者姓名顺序
+  适用范围: 英文题名页 Candidate 行
+  标准要求: 中文姓名按姓在前、名在后排列，姓氏使用大写；需结合作者身份人工确认。
+  技术预期值: Chinese name order is family name first and the family name is uppercase.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Name segmentation and romanization require identity context.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 一级来源：模板正文明确要求；模板段落 P028
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: FRONT-001
+  规则名称: 声明与授权页完整性
+  类别: 前置部分
+  检查对象: 声明与授权页完整性
+  适用范围: 论文前置部分
+  标准要求: 应包含独创性声明、学位论文版权使用授权书及签名和日期区域；院系批准的等效版本可人工确认。
+  技术预期值:
+  - 独创性声明
+  - 学位论文版权使用授权书
+  - signature/date areas
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Equivalent institution-approved wording may require manual confirmation.
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 二级来源：模板中可识别的示例；模板段落 P038-P056
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: FONT-001
+  规则名称: 正文中英文字体和字号
+  类别: 字体与字符格式
+  检查对象: 正文中英文字体和字号
+  适用范围: 正文，排除标题、题注、表格、脚注、公式和参考文献
+  标准要求: 中文宋体，英文和数字 Times New Roman，小四（12 磅）。
+  技术预期值:
+    east_asian_font: 宋体
+    latin_font: Times New Roman
+    size_pt: 12
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差:
+    size_pt: 0.25
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；模板段落 P133
+  检查方法: 解析 DOCX/OOXML，计算最终有效属性，并与本规则的标准要求自动比较。
+  自动化程度: 自动检查
+  自动化代码: AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: FONT-002
+  规则名称: 正文颜色
+  类别: 字体与字符格式
+  检查对象: 正文颜色
+  适用范围: 普通正文文字
+  标准要求: '最终有效颜色为自动黑色或 #000000；合法超链接、修订标记和模板明确允许的彩色对象除外。'
+  技术预期值:
+    color: 000000 or automatic black
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Theme black accepted; hyperlinks, tracked changes, fields, figures, and intentional emphasis excluded.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 三级来源：Word 样式或 OOXML
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: FONT-003
+  规则名称: 混合文字的分语种字体
+  类别: 字体与字符格式
+  检查对象: 混合文字的分语种字体
+  适用范围: 所有文字内容
+  标准要求: 同一文字片段中也必须分别按中文、英文和数字解析有效字体，不能只读取单一 font.name。
+  技术预期值: Chinese and English/digit characters use their required script-specific fonts even when stored in one run.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Font fallback may require Word rendering confirmation.
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；三级来源：Word 样式或 OOXML
+  检查方法: 解析 DOCX/OOXML，计算最终有效属性，并与本规则的标准要求自动比较。
+  自动化程度: 自动检查
+  自动化代码: AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: PARA-001
+  规则名称: 正文对齐与行距
+  类别: 段落格式
+  检查对象: 正文对齐与行距
+  适用范围: 正文段落
+  标准要求: 正文采用两端对齐和 1.5 倍行距。
+  技术预期值:
+    alignment: justified
+    line_spacing: 1.5 lines
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差:
+    line_spacing_twips: 10
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；模板段落 P133
+  检查方法: 解析 DOCX/OOXML，计算最终有效属性，并与本规则的标准要求自动比较。
+  自动化程度: 自动检查
+  自动化代码: AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: PARA-002
+  规则名称: 空段与人工空格
+  类别: 段落格式
+  检查对象: 空段与人工空格
+  适用范围: 整篇文档
+  标准要求: 优先通过段落属性控制间距，避免用连续空段、连续空格、全角空格或异常制表位制造版面。
+  技术预期值: Spacing should be controlled by paragraph properties; avoid repeated blank paragraphs or manual spaces that create layout gaps.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Single intentional spacer in a form or cover may be allowed.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 一级来源：模板正文明确要求；模板段落 P225
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: PARA-003
+  规则名称: 人工分页与段落分页属性
+  类别: 段落格式
+  检查对象: 人工分页与段落分页属性
+  适用范围: 整篇文档
+  标准要求: 人工分页符、分栏符、段前分页、与下段同页及段中不分页等属性不得造成空白页、孤立题注或异常分页。
+  技术预期值: Manual page/column breaks and keep properties must not cause unintended blank pages or detached captions.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Context dependent.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 四级来源：有记录的实现推断；文档无损或实现约束
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: HEAD-001
+  规则名称: 章标题格式
+  类别: 标题与编号
+  检查对象: 章标题格式
+  适用范围: 正文一级标题
+  标准要求: 黑体、三号（16 磅）、加粗、居中，并使用连续的章编号。
+  技术预期值:
+    east_asian_font: 黑体
+    size_pt: 16
+    bold: true
+    alignment: center
+    numbering: decimal chapter number
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差:
+    size_pt: 0.25
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；三级来源：Word 样式或 OOXML；模板段落 P127/P132
+  检查方法: 解析 DOCX/OOXML，计算最终有效属性，并与本规则的标准要求自动比较。
+  自动化程度: 自动检查
+  自动化代码: AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: HEAD-002
+  规则名称: 节标题格式
+  类别: 标题与编号
+  检查对象: 节标题格式
+  适用范围: 正文二级标题
+  标准要求: 黑体、四号（14 磅）、加粗，编号形式为 1.1。
+  技术预期值:
+    east_asian_font: 黑体
+    size_pt: 14
+    bold: true
+    numbering_pattern: '%1.%2'
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差:
+    size_pt: 0.25
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；三级来源：Word 样式或 OOXML；模板段落 P132/P137
+  检查方法: 解析 DOCX/OOXML，计算最终有效属性，并与本规则的标准要求自动比较。
+  自动化程度: 自动检查
+  自动化代码: AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: HEAD-003
+  规则名称: 三级标题格式
+  类别: 标题与编号
+  检查对象: 三级标题格式
+  适用范围: 正文三级标题
+  标准要求: 黑体、小四（12 磅）、加粗，编号形式为 1.1.1。
+  技术预期值:
+    east_asian_font: 黑体
+    size_pt: 12
+    bold: true
+    numbering_pattern: '%1.%2.%3'
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差:
+    size_pt: 0.25
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；三级来源：Word 样式或 OOXML；模板段落 P140/P168
+  检查方法: 解析 DOCX/OOXML，计算最终有效属性，并与本规则的标准要求自动比较。
+  自动化程度: 自动检查
+  自动化代码: AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: HEAD-004
+  规则名称: 标题层级与自动编号
+  类别: 标题与编号
+  检查对象: 标题层级与自动编号
+  适用范围: 正文标题体系
+  标准要求: 标题层级必须连续且有实际结构意义，不得跳级，不应仅用直接格式模拟标题；前置部分无编号一级标题除外。
+  技术预期值: Heading levels are consecutive, structurally meaningful, and not simulated with direct formatting alone.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Unnumbered front-matter headings may use Heading 1 without a chapter number.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 一级来源：模板正文明确要求
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: HEAD-005
+  规则名称: 标题辨识度
+  类别: 标题与编号
+  检查对象: 标题辨识度
+  适用范围: 正文各节标题
+  标准要求: 避免“材料与方法”“实验结果”“分析与讨论”“结论”等缺乏辨识度的笼统标题，具体判断需结合学科内容。
+  技术预期值: Avoid generic, non-distinctive titles when a specific research-result or topic title is possible.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Discipline and context dependent.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 一级来源：模板正文明确要求；模板段落 P125/P184
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: ABS-001
+  规则名称: 中文摘要长度
+  类别: 摘要与关键词
+  检查对象: 中文摘要长度
+  适用范围: 中文摘要正文
+  标准要求: 中文摘要一般为 500 至 600 个汉字，作为建议性警告而不是硬性错误。
+  技术预期值:
+    length_chinese_characters_min: 500
+    length_chinese_characters_max: 600
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Count CJK characters after excluding the heading and keyword line.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 一级来源：模板正文明确要求；模板段落 P068
+  检查方法: 解析 DOCX/OOXML，计算最终有效属性，并与本规则的标准要求自动比较。
+  自动化程度: 自动检查
+  自动化代码: AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: ABS-002
+  规则名称: 中文摘要与关键词字体
+  类别: 摘要与关键词
+  检查对象: 中文摘要与关键词字体
+  适用范围: 中文摘要及中文关键词
+  标准要求: 中文宋体，英文和数字 Times New Roman，小四（12 磅）。
+  技术预期值:
+    east_asian_font: 宋体
+    latin_font: Times New Roman
+    size_pt: 12
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差:
+    size_pt: 0.25
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；模板段落 P073
+  检查方法: 解析 DOCX/OOXML，计算最终有效属性，并与本规则的标准要求自动比较。
+  自动化程度: 自动检查
+  自动化代码: AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: ABS-003
+  规则名称: 英文摘要格式
+  类别: 摘要与关键词
+  检查对象: 英文摘要格式
+  适用范围: 英文 Abstract 正文
+  标准要求: Times New Roman、小四（12 磅）、1.5 倍行距。
+  技术预期值:
+    font: Times New Roman
+    size_pt: 12
+    line_spacing: 1.5 lines
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差:
+    size_pt: 0.25
+    line_spacing_twips: 10
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；模板段落 P078
+  检查方法: 解析 DOCX/OOXML，计算最终有效属性，并与本规则的标准要求自动比较。
+  自动化程度: 自动检查
+  自动化代码: AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: ABS-004
+  规则名称: 中文关键词结构
+  类别: 摘要与关键词
+  检查对象: 中文关键词结构
+  适用范围: 中文关键词行
+  标准要求: 关键词 3 至 8 个，另起一行，使用中文分号“；”分隔，最后一个关键词后不加标点。
+  技术预期值:
+    count_min: 3
+    count_max: 8
+    separator: ；
+    trailing_punctuation: false
+    own_line_below_abstract: true
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Whitespace around keywords ignored.
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；模板段落 P072
+  检查方法: 解析 DOCX/OOXML，计算最终有效属性，并与本规则的标准要求自动比较。
+  自动化程度: 自动检查
+  自动化代码: AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: ABS-005
+  规则名称: 中英文摘要对应关系
+  类别: 摘要与关键词
+  检查对象: 中英文摘要对应关系
+  适用范围: 中英文摘要和关键词
+  标准要求: 英文摘要及关键词应与中文内容对应并使用学科通用术语；属于人工语义复核。
+  技术预期值: English abstract and keywords correspond to the Chinese versions and use discipline-appropriate terms.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Semantic equivalence, not literal translation.
+  严重程度: 人工复核
+  严重程度代码: MANUAL_REVIEW
+  规则依据: 一级来源：模板正文明确要求；模板段落 P074/P079
+  检查方法: 使用 Word/LibreOffice 渲染结果或人工语义、视觉和专业判断进行复核。
+  自动化程度: 人工检查
+  自动化代码: MANUAL_REVIEW
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: ABS-006
+  规则名称: 摘要内容形式
+  类别: 摘要与关键词
+  检查对象: 摘要内容形式
+  适用范围: 中英文摘要
+  标准要求: 摘要应具有自含性；一般避免图表、公式、程序、非公知符号、未解释缩写和“我们”等第一人称表达。
+  技术预期值: Abstract is self-contained; normally avoids figures, tables, formulas, programs, uncommon symbols/terms, non-statutory units, unexplained abbreviations,
+    and first-person '我们'.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Exceptions may be justified by discipline.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 一级来源：模板正文明确要求；模板段落 P059-P071
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: TOC-001
+  规则名称: 自动目录与收录层级
+  类别: 目录
+  检查对象: 自动目录与收录层级
+  适用范围: 目录
+  标准要求: 目录必须由 Word TOC 域自动生成，只列至二级标题；无编号前置部分标题可按模板收录。
+  技术预期值:
+    generated_automatically: true
+    maximum_heading_level: 2
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Front-matter headings may be included as unnumbered entries.
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；模板段落 P123
+  检查方法: 解析 DOCX/OOXML，计算最终有效属性，并与本规则的标准要求自动比较。
+  自动化程度: 自动检查
+  自动化代码: AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: TOC-002
+  规则名称: 目录字体字号和行距
+  类别: 目录
+  检查对象: 目录字体字号和行距
+  适用范围: 一级和二级目录条目
+  标准要求: 中文宋体，英文和数字 Times New Roman，四号（14 磅），固定值 25 磅行距；模板 TOC 样式的 10 磅为已记录冲突。
+  技术预期值:
+    east_asian_font: 宋体
+    latin_and_digits_font: Times New Roman
+    size_pt: 14
+    line_spacing: fixed 25 pt
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差:
+    size_pt: 0.25
+    line_spacing_pt: 0.25
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；模板段落 P124；关联冲突 CONFLICT-TOC-001
+  检查方法: 解析 DOCX/OOXML，计算最终有效属性，并与本规则的标准要求自动比较。
+  自动化程度: 自动检查
+  自动化代码: AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: TOC-003
+  规则名称: 目录内容与页码更新
+  类别: 目录
+  检查对象: 目录内容与页码更新
+  适用范围: 全部目录条目
+  标准要求: 目录文字、书签目标和页码应与正文一致；若域未更新或无法渲染，标记为需要人工复核。
+  技术预期值: TOC entry text and page references match current headings and pagination after field update.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Page number correctness requires a current field result or Word rendering/update.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 一级来源：模板正文明确要求；三级来源：Word 样式或 OOXML
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: FIG-001
+  规则名称: 图片位置、尺寸和分辨率
+  类别: 图片
+  检查对象: 图片位置、尺寸和分辨率
+  适用范围: 正文中的全部图片
+  标准要求: 图片基本居中且不超出版芯；能取得原始像素和显示尺寸时计算有效 DPI，低于建议的 300 dpi 时警告。
+  技术预期值:
+    alignment: center
+    within_text_area: true
+    preferred_min_dpi: 300
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: DPI warning applies only when intrinsic dimensions are available; visual centering may require rendering for floating shapes.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 一级来源：模板正文明确要求；模板段落 P215
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: FIG-002
+  规则名称: 图题格式与编号
+  类别: 图片
+  检查对象: 图题格式与编号
+  适用范围: 全部图题
+  标准要求: 图题位于图下方、居中、宋体五号（10.5 磅），按章编号如“图4-1”，末尾不加标点。
+  技术预期值:
+    position: below figure
+    alignment: center
+    east_asian_font: 宋体
+    size_pt: 10.5
+    numbering_pattern: 图{chapter}-{sequence}
+    trailing_punctuation: false
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差:
+    size_pt: 0.25
+    separator_alias_warning:
+    - .
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；三级来源：Word 样式或 OOXML；模板段落 P215
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: FIG-003
+  规则名称: 图内文字
+  类别: 图片
+  检查对象: 图内文字
+  适用范围: 可读取的图内标签和文本框
+  标准要求: 图内文字一般不大于五号（10.5 磅），尽量使用中文；栅格图内文字和缩放后效果需人工查看。
+  技术预期值:
+    maximum_size_pt: 10.5
+    preferred_language: Chinese
+    after_scaling_maximum_size_pt: 10.5
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Rasterized text and post-scaling readability need visual review.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 一级来源：模板正文明确要求；模板段落 P215/P226
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: FIG-004
+  规则名称: 图的正文引用、来源与邻近性
+  类别: 图片
+  检查对象: 图的正文引用、来源与邻近性
+  适用范围: 全部图片
+  标准要求: 图片应在正文中被引用并靠近相关文字；引用他人图片时在图题末尾标注文献来源。
+  技术预期值: Each figure is referenced in text, placed near relevant text, and a sourced figure carries a citation at the end of its caption.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Source status and acceptable proximity are contextual.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 一级来源：模板正文明确要求；模板段落 P215/P221/P225
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: FIG-005
+  规则名称: 图片可读性与科学性
+  类别: 图片
+  检查对象: 图片可读性与科学性
+  适用范围: 全部图片
+  标准要求: 图应清晰、自明、风格一致，必要时具有比例尺、色标等；由人工视觉和专业判断复核。
+  技术预期值: Figures are clear, self-explanatory, consistently styled, scientifically accurate, and include required scale bars/color bars.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Discipline and content dependent.
+  严重程度: 人工复核
+  严重程度代码: MANUAL_REVIEW
+  规则依据: 一级来源：模板正文明确要求；模板段落 P218-P226
+  检查方法: 使用 Word/LibreOffice 渲染结果或人工语义、视觉和专业判断进行复核。
+  自动化程度: 人工检查
+  自动化代码: MANUAL_REVIEW
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: TAB-001
+  规则名称: 三线表结构
+  类别: 表格
+  检查对象: 三线表结构
+  适用范围: 正文中的全部表格
+  标准要求: 表格居中，具有表顶线、表头下分隔线和表底线，通常无竖线和大面积内部横线；复杂合并表可降级复核。
+  技术预期值:
+    style: three-line table
+    alignment: center
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Additional horizontal rules may be justified for multi-level headers; no routine vertical borders.
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；模板段落 P228
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: TAB-002
+  规则名称: 表题位置与编号
+  类别: 表格
+  检查对象: 表题位置与编号
+  适用范围: 全部表题
+  标准要求: 表题位于表格上方并居中，按章编号如“表4-1”，末尾不加标点。
+  技术预期值:
+    position: above table
+    alignment: center
+    numbering_pattern: 表{chapter}-{sequence}
+    trailing_punctuation: false
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差:
+    separator_alias_warning:
+    - .
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；模板段落 P228/P232
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: TAB-003
+  规则名称: 表头和表中文字
+  类别: 表格
+  检查对象: 表头和表中文字
+  适用范围: 表头及表格正文
+  标准要求: 中文宋体，英文和数字 Times New Roman，五号（10.5 磅）；仅需中文表头，表头末尾不加标点。
+  技术预期值:
+    east_asian_font: 宋体
+    latin_and_digits_font: Times New Roman
+    size_pt: 10.5
+    chinese_header_only: true
+    header_trailing_punctuation: false
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差:
+    size_pt: 0.25
+    body_smaller_than_main_text: true
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；模板段落 P228
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: TAB-004
+  规则名称: 跨页表格
+  类别: 表格
+  检查对象: 跨页表格
+  适用范围: 跨页表格
+  标准要求: 跨页时重复标题行，并在后续页标明“续表”；尽量保持表题和表格同页，最终分页需渲染复核。
+  技术预期值:
+    repeat_header: true
+    continuation_label: 续表
+    caption_kept_with_table: true
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Actual page split depends on rendering.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 一级来源：模板正文明确要求；模板段落 P228
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: TAB-005
+  规则名称: 表下注释
+  类别: 表格
+  检查对象: 表下注释
+  适用范围: 紧邻表格的注释
+  标准要求: 表下注释使用宋体五号（10.5 磅）。
+  技术预期值:
+    east_asian_font: 宋体
+    size_pt: 10.5
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差:
+    size_pt: 0.25
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；模板段落 P230
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: TAB-006
+  规则名称: 表格内容质量
+  类别: 表格
+  检查对象: 表格内容质量
+  适用范围: 全部表格
+  标准要求: 表格应自明、一致、数据完整准确，单位和术语规范；属于人工和专业复核。
+  技术预期值: Tables are self-contained, consistent, accurate, use lawful units and standard terminology, and contain no overlapping or omitted intervals.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Requires discipline-specific judgment.
+  严重程度: 人工复核
+  严重程度代码: MANUAL_REVIEW
+  规则依据: 一级来源：模板正文明确要求；模板段落 P233-P242
+  检查方法: 使用 Word/LibreOffice 渲染结果或人工语义、视觉和专业判断进行复核。
+  自动化程度: 人工检查
+  自动化代码: MANUAL_REVIEW
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: EQ-001
+  规则名称: 公式对象和版式
+  类别: 公式
+  检查对象: 公式对象和版式
+  适用范围: 独立显示公式
+  标准要求: 优先使用可编辑的 Word/OMML 公式，主体符号约 12 磅，公式居中、编号右对齐；图片公式只作人工检查提示。
+  技术预期值:
+    preferred_format: editable OMML/Word equation
+    main_symbol_size_pt: 12
+    alignment: center
+    number_alignment: right
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Equivalent editable equation objects accepted; image equations trigger warning.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 一级来源：模板正文明确要求；二级来源：模板中可识别的示例；模板段落 P181
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: EQ-002
+  规则名称: 公式编号
+  类别: 公式
+  检查对象: 公式编号
+  适用范围: 带编号的独立公式
+  标准要求: 按章连续编号，优先形式为“(2-3)”；圆括号以及点号或短横线的冲突按警告或人工复核处理。
+  技术预期值:
+    scheme: chapter-based
+    preferred_pattern: '{chapter}-{sequence}'
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Parentheses and dot versus hyphen remain ambiguous.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 一级来源：模板正文明确要求；二级来源：模板中可识别的示例；模板段落 P181；关联冲突 CONFLICT-EQ-001
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: NOTE-001
+  规则名称: 脚注文字和段落
+  类别: 脚注与注释
+  检查对象: 脚注文字和段落
+  适用范围: 全部脚注
+  标准要求: 中文宋体小五（9 磅），英文 Times New Roman 9 磅，单倍行距，顶格，无首行和左缩进。
+  技术预期值:
+    east_asian_font: 宋体
+    latin_font: Times New Roman
+    size_pt: 9
+    line_spacing: single
+    alignment: left
+    first_line_indent: 0
+    left_indent: 0
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差:
+    size_pt: 0.25
+    indent_twips: 10
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；模板段落 P321-P323
+  检查方法: 解析 DOCX/OOXML，计算最终有效属性，并与本规则的标准要求自动比较。
+  自动化程度: 自动检查
+  自动化代码: AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: NOTE-002
+  规则名称: 脚注编号
+  类别: 脚注与注释
+  检查对象: 脚注编号
+  适用范围: 全部脚注
+  标准要求: 脚注每页重新编号，可使用阿拉伯数字或带圈数字，编号后空一个字符；每页重启效果需渲染确认。
+  技术预期值:
+    restart: each page
+    allowed_markers:
+    - 1,2,3
+    - ①②③
+    space_after_marker_characters: 1
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Per-page restart may require Word layout verification.
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；模板段落 P324
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: NOTE-003
+  规则名称: 脚注页码和标点
+  类别: 脚注与注释
+  检查对象: 脚注页码和标点
+  适用范围: 全部脚注
+  标准要求: 中文页码如“第16-17页”，英文多页如“pp.5~8”、单页如“p19”，并使用对应语言的标点。
+  技术预期值:
+    chinese_page_range: 第16-17页
+    english_page_range: pp.5~8
+    english_single_page: p19
+    punctuation_matches_language: true
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Spacing variants may be warnings rather than errors.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 一级来源：模板正文明确要求；模板段落 P325-P326
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: NOTE-004
+  规则名称: 网页来源脚注
+  类别: 脚注与注释
+  检查对象: 网页来源脚注
+  适用范围: 非期刊和非会议类网页来源
+  标准要求: 相关网页来源应在引用所在页通过脚注标明，来源类型需结合上下文判断。
+  技术预期值: Web sources outside journal/conference literature are identified in a footnote on the citing page.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Source classification requires context.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 一级来源：模板正文明确要求；模板段落 P201
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: REF-001
+  规则名称: 参考文献顺序编号
+  类别: 参考文献
+  检查对象: 参考文献顺序编号
+  适用范围: 正文引文和参考文献表
+  标准要求: 采用顺序编码制，按正文首次出现顺序排列，编号连续且无重复、缺失或跳号。
+  技术预期值:
+    scheme: numeric
+    order: first appearance
+    sequence: continuous
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Cross-reference fields and bracket variants accepted if unambiguous.
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；模板段落 P135
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: REF-002
+  规则名称: 参考文献作者数量
+  类别: 参考文献
+  检查对象: 参考文献作者数量
+  适用范围: 全部参考文献
+  标准要求: 作者不超过 6 人时全部列出；超过 6 人时列前 6 人，中文加“等”，英文加“et al.”；作者之间用逗号分隔。
+  技术预期值:
+    list_all_if_author_count_lte: 6
+    if_more_than_6: first 6 plus 等 for Chinese or et al for English
+    separator: comma
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Corporate authors and anonymous works require manual classification.
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: REF-003
+  规则名称: 参考文献末尾标点
+  类别: 参考文献
+  检查对象: 参考文献末尾标点
+  适用范围: 全部参考文献条目
+  标准要求: 每条参考文献末尾不由格式追加句号或其他标点；需区分字段本身包含的句点。
+  技术预期值:
+    trailing_punctuation: false
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: A period that is part of the final field value must be distinguished from style-added punctuation.
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: REF-004
+  规则名称: 图书著录格式
+  类别: 参考文献
+  检查对象: 图书著录格式
+  适用范围: 图书类参考文献
+  标准要求: '作者. 书名. 版次. 译者. 出版地: 出版者, 年份. 可选起止页码。缺少可选项时不得产生重复标点。'
+  技术预期值: 'Authors. Title. Edition. Translator. Place: Publisher, Year. Optional start-end pages'
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Omit unavailable optional translator/pages without leaving doubled punctuation.
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: REF-005
+  规则名称: 期刊论文著录格式
+  类别: 参考文献
+  检查对象: 期刊论文著录格式
+  适用范围: 期刊论文参考文献
+  标准要求: '作者. 文章名. 期刊全称, 年份, 卷(期): 页码或论文编号。期号确实不存在时允许省略。'
+  技术预期值: 'Authors. Article title. Full journal title, Year, Volume(Issue): Pages or article number'
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Issue may be absent when legitimately unavailable; article number may replace pages.
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: REF-006
+  规则名称: 会议论文著录格式
+  类别: 参考文献
+  检查对象: 会议论文著录格式
+  适用范围: 会议论文参考文献
+  标准要求: '作者. 文章名. 见/in: 会议名称或论文集. 城市, 国家, 会议日期, 出版者, 出版年: 页码。无法取得的可选字段按警告处理。'
+  技术预期值: 'Authors. Article title. 见/in: Conference or proceedings. City, Country, Conference date, Publisher, Year: Pages'
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Optional unavailable location/date fields may be warned rather than failed.
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: REF-007
+  规则名称: 专利著录格式
+  类别: 参考文献
+  检查对象: 专利著录格式
+  适用范围: 专利参考文献
+  标准要求: 申请者. 专利题名. 国别, 专利文献种类, 专利号, 出版年；不固定要求输出 [P]。
+  技术预期值: Applicant. Patent title. Jurisdiction, Patent document type, Patent number, Publication year
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Do not require a fixed [P] marker; retain conflict with legacy examples as provenance.
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: REF-008
+  规则名称: 学位论文著录格式
+  类别: 参考文献
+  检查对象: 学位论文著录格式
+  适用范围: 学位论文参考文献
+  标准要求: '作者. 题名: [博士学位论文/硕士学位论文]. 保存地点: 保存单位, 年份。'
+  技术预期值: 'Author. Title: [博士学位论文/硕士学位论文]. Place: Institution, Year'
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Colon placement follows the explicit user-approved interpretation; legacy example without colon is lower priority.
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；用户明确需求
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: REF-009
+  规则名称: 参考文献数量与构成
+  类别: 参考文献
+  检查对象: 参考文献数量与构成
+  适用范围: 全部参考文献
+  标准要求: 一般不少于 40 条，外文文献和近 5 年文献各不少于约三分之一；均按建议性警告处理。
+  技术预期值:
+    minimum_total: 40
+    minimum_foreign_fraction: 0.3333
+    minimum_recent_5_year_fraction: 0.3333
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Publication year cutoff is relative to thesis year; language/origin classification can be ambiguous.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 一级来源：模板正文明确要求
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: REF-010
+  规则名称: 中英文作者姓名写法
+  类别: 参考文献
+  检查对象: 中英文作者姓名写法
+  适用范围: 参考文献作者字段
+  标准要求: 中文姓名姓在前、名在后且不缩写；英文姓名名的首字母在前并带句点，姓氏全称在后。
+  技术预期值:
+    chinese: family name before given name, un-abbreviated
+    english: given-name initials before full family name, initials include periods
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Non-Western romanized names and particles require manual review.
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: REF-011
+  规则名称: 参考文献事实准确性
+  类别: 参考文献
+  检查对象: 参考文献事实准确性
+  适用范围: 参考文献及正文引文
+  标准要求: 文献信息应完整准确、在正文中被引用且不重复；系统只能做内部一致性检查，真实性需人工或权威数据库核验。
+  技术预期值: Bibliographic facts are complete, accurate, cited in the text, and not duplicated.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: External bibliographic verification is outside deterministic OOXML inspection.
+  严重程度: 人工复核
+  严重程度代码: MANUAL_REVIEW
+  规则依据: 四级来源：有记录的实现推断；文档无损或实现约束
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: OBJ-001
+  规则名称: 形状与文本框
+  类别: 特殊 Word 对象
+  检查对象: 形状与文本框
+  适用范围: 全部 DrawingML、VML 形状和文本框
+  标准要求: 形状中文字、颜色、锚定、环绕和几何属性必须纳入审查，不得静默跳过；重叠和裁切需渲染确认。
+  技术预期值: Text, colors, anchoring, wrapping, and geometry are included in the audit; no object is silently ignored.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Visual overlap/clipping needs rendering.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 三级来源：Word 样式或 OOXML；用户明确需求
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: OBJ-002
+  规则名称: 域、书签和交叉引用
+  类别: 特殊 Word 对象
+  检查对象: 域、书签和交叉引用
+  适用范围: 整篇文档
+  标准要求: 域、书签、超链接及 REF/PAGEREF 等交叉引用结构有效，不存在断裂目标；显示结果可能需要 Word 更新。
+  技术预期值: Fields, bookmarks, hyperlinks, and cross-references are structurally valid and have no broken targets.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Displayed field results may be stale until Word updates fields.
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 三级来源：Word 样式或 OOXML；用户明确需求
+  检查方法: 解析 DOCX/OOXML，计算最终有效属性，并与本规则的标准要求自动比较。
+  自动化程度: 自动检查
+  自动化代码: AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: OBJ-003
+  规则名称: 修订、原批注和内容控件
+  类别: 特殊 Word 对象
+  检查对象: 修订、原批注和内容控件
+  适用范围: 整篇文档
+  标准要求: 必须清点并保留现有修订、批注和内容控件；审查模式不得自动接受修订或删除内容控件。
+  技术预期值: Existing revisions, comments, and content controls are inventoried and preserved; unresolved items are disclosed in the report.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: No automatic accept/reject or control removal in review-only mode.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 用户明确需求；文档无损或实现约束
+  检查方法: 解析 DOCX/OOXML，计算最终有效属性，并与本规则的标准要求自动比较。
+  自动化程度: 自动检查
+  自动化代码: AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: LANG-001
+  规则名称: 术语、符号和计量单位一致性
+  类别: 语言、符号与单位
+  检查对象: 术语、符号和计量单位一致性
+  适用范围: 整篇论文
+  标准要求: 科技名词、缩写、量、单位、符号和标点应统一并符合模板引用的现行标准；需专业人工复核。
+  技术预期值: Scientific terms, abbreviations, quantities, units, symbols, and punctuation are consistent and follow current national/disciplinary standards cited by the
+    template.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Requires domain and edition-aware judgment.
+  严重程度: 人工复核
+  严重程度代码: MANUAL_REVIEW
+  规则依据: 一级来源：模板正文明确要求；模板段落 P243-P259
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: LANG-002
+  规则名称: 外文专名和缩写首次出现
+  类别: 语言、符号与单位
+  检查对象: 外文专名和缩写首次出现
+  适用范围: 外文专名及缩写首次出现处
+  标准要求: 首次出现时给出原文或全称及缩写，后续写法保持一致；公知缩写可人工豁免。
+  技术预期值: First occurrence supplies the original/full form and abbreviation where applicable; later occurrences are consistent.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Commonly accepted terms may not require expansion.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 一级来源：模板正文明确要求；模板段落 P071/P245
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: LANG-003
+  规则名称: 数字与单位之间的空格
+  类别: 语言、符号与单位
+  检查对象: 数字与单位之间的空格
+  适用范围: 正文、题注、表格和公式
+  标准要求: 阿拉伯数字与单位符号遵循模板所引标准，需要空格时保留一个空格，并检查异常千位分隔写法。
+  技术预期值: Arabic numbers and unit symbols follow the template's cited standards; quantity and unit are separated by a space where required.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Mathematical typography and compound units require context.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 一级来源：模板正文明确要求；模板段落 P247-P259
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: STRUCT-001
+  规则名称: 论文篇幅与章节构成
+  类别: 论文结构
+  检查对象: 论文篇幅与章节构成
+  适用范围: 绪论至总结与展望
+  标准要求: 一般至少包含 2 章主体研究内容，加绪论和总结与展望累计不少于 5 章；约 2.5 万字和 65 页作为建议性指标。
+  技术预期值:
+    minimum_research_content_chapters: 2
+    minimum_total_chapters_including_intro_and_conclusion: 5
+    recommended_minimum_words: 25000
+    recommended_minimum_pages: 65
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Page and word thresholds are stated as general expectations and may vary by program.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 一级来源：模板正文明确要求；模板段落 P128/P149
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: STRUCT-002
+  规则名称: 本章小结
+  类别: 论文结构
+  检查对象: 本章小结
+  适用范围: 各研究章节结尾
+  标准要求: 研究章节一般以简洁的本章小结结束，建议约半页至三分之二页；实际篇幅需渲染和人工判断。
+  技术预期值: Each research chapter normally ends with a concise chapter summary; suggested length is about one-half to two-thirds of a page.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Optional exceptions and actual page fraction require judgment/rendering.
+  严重程度: 警告
+  严重程度代码: WARNING
+  规则依据: 一级来源：模板正文明确要求；模板段落 P194/P208
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: APP-001
+  规则名称: 成果附录作者列表
+  类别: 成果附录
+  检查对象: 成果附录作者列表
+  适用范围: 附录1中的论文、专利等成果
+  标准要求: 列出全部作者，英文姓名使用完整名字在前、完整姓氏在后，本人姓名加粗；本人为第一作者时说明华中科技大学是否第一单位。
+  技术预期值:
+    all_authors_listed: true
+    english_names: full given name before full family name
+    thesis_author_bold: true
+    first_author_note_hust_first_affiliation: true
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Affiliation note applies when the thesis author is first author.
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；模板段落 P330/P334
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: APP-002
+  规则名称: 成果发表状态
+  类别: 成果附录
+  检查对象: 成果发表状态
+  适用范围: 附录1论文成果
+  标准要求: 已发表项目给出页码，仅在线发表项目给出链接，接收、修改、投稿或拟投项目明确注明状态。
+  技术预期值: Published entries include pages; online entries include links; accepted/revised/submitted/planned entries explicitly state status.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Status wording may vary.
+  严重程度: 错误
+  严重程度代码: ERROR
+  规则依据: 一级来源：模板正文明确要求；模板段落 P331
+  检查方法: 程序先定位对象并读取相关属性，再结合上下文或渲染结果进行必要复核。
+  自动化程度: 半自动检查
+  自动化代码: SEMI_AUTOMATIC
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: APP-003
+  规则名称: 其他附录内容
+  类别: 附录
+  检查对象: 其他附录内容
+  适用范围: 附录2及后续附录
+  标准要求: 内容应属于详细公式推导、实验数据、计算程序、原始资料等补充材料，由人工判断是否适合放入附录。
+  技术预期值: Appendix content is supplementary, such as detailed derivations, experimental data, programs, or original source material.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Content appropriateness is contextual.
+  严重程度: 人工复核
+  严重程度代码: MANUAL_REVIEW
+  规则依据: 一级来源：模板正文明确要求；模板段落 P343
+  检查方法: 使用 Word/LibreOffice 渲染结果或人工语义、视觉和专业判断进行复核。
+  自动化程度: 人工检查
+  自动化代码: MANUAL_REVIEW
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: RENDER-001
+  规则名称: 页面最终版式
+  类别: 渲染后检查
+  检查对象: 页面最终版式
+  适用范围: 整篇论文渲染页面
+  标准要求: 不得出现裁切、重叠、孤立题注、非预期空白页、大面积异常留白或对象越出版芯；必须通过可靠渲染检查。
+  技术预期值: No clipping, overlap, orphaned captions, unintended blank pages, large unexplained whitespace, or objects outside the text area.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Normal academic pagination differences may be accepted.
+  严重程度: 人工复核
+  严重程度代码: MANUAL_REVIEW
+  规则依据: 一级来源：模板正文明确要求；用户明确需求
+  检查方法: 使用 Word/LibreOffice 渲染结果或人工语义、视觉和专业判断进行复核。
+  自动化程度: 人工检查
+  自动化代码: MANUAL_REVIEW
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: RENDER-002
+  规则名称: 页眉页脚视觉效果
+  类别: 渲染后检查
+  检查对象: 页眉页脚视觉效果
+  适用范围: 全部渲染页面
+  标准要求: 页眉文字、红色双线、页脚页码及距边界效果应一致，且不与正文碰撞；前置部分按分节设计处理。
+  技术预期值: Header text, colored double rules, footer page number, and distances are visually consistent and do not collide with body content.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Front-matter exceptions follow intended section design.
+  严重程度: 人工复核
+  严重程度代码: MANUAL_REVIEW
+  规则依据: 二级来源：模板中可识别的示例；关联冲突 CONFLICT-HF-001、CONFLICT-FOOTER-001
+  检查方法: 使用 Word/LibreOffice 渲染结果或人工语义、视觉和专业判断进行复核。
+  自动化程度: 人工检查
+  自动化代码: MANUAL_REVIEW
+  批注模板: 使用本文件顶部的通用批注模板
+- 规则编号: RENDER-003
+  规则名称: 图表公式可读性
+  类别: 渲染后检查
+  检查对象: 图表公式可读性
+  适用范围: 图、表、公式和高密度页面
+  标准要求: 所有内容在最终尺寸下清晰可读，页面构图均衡；属于人工视觉复核。
+  技术预期值: All content remains legible at final size and page composition is balanced.
+  容差与例外: 按本规则所列数值容差或例外处理；无法可靠判定时不得武断报错。
+  技术容差: Human visual judgment.
+  严重程度: 人工复核
+  严重程度代码: MANUAL_REVIEW
+  规则依据: 一级来源：模板正文明确要求
+  检查方法: 使用 Word/LibreOffice 渲染结果或人工语义、视觉和专业判断进行复核。
+  自动化程度: 人工检查
+  自动化代码: MANUAL_REVIEW
+  批注模板: 使用本文件顶部的通用批注模板

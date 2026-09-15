@@ -1,0 +1,148 @@
+{
+  "schema_version": "1.0.0",
+  "artifact": {
+    "filename": "华中科技大学硕士学位论文参考模板.docx",
+    "source_path_at_analysis": "D:/学习资料/毕业论文/1、毕业论文/格式文件/理工科-硕士-华中科技大学学位论文参考模板.docx",
+    "sha256": "43DB10A8AFB05D346F84B9A7C08A7E811667D27660CC0018B7C047115674B9C1",
+    "analyzed_on": "2026-09-12",
+    "modified": false,
+    "render_available": false
+  },
+  "inspection": {
+    "parts_examined": [
+      "[Content_Types].xml",
+      "word/document.xml",
+      "word/styles.xml",
+      "word/settings.xml",
+      "word/numbering.xml",
+      "word/theme/theme1.xml",
+      "word/fontTable.xml",
+      "word/header*.xml",
+      "word/footer*.xml",
+      "word/footnotes.xml",
+      "word/endnotes.xml",
+      "word/_rels/document.xml.rels",
+      "word/media/*",
+      "word/diagrams/*",
+      "customXml/*"
+    ],
+    "body_paragraphs": 344,
+    "heading_counts": {
+      "Heading 1": 12,
+      "Heading 2": 26,
+      "Heading 3": 9
+    },
+    "section_count": 3,
+    "content_control_count": 20,
+    "field_counts": {
+      "PAGEREF": 32,
+      "PAGE": 2,
+      "REF": 1,
+      "STYLEREF": 1
+    },
+    "footnote_count_excluding_separators": 2,
+    "endnote_count_excluding_separators": 0,
+    "drawing_counts": {
+      "inline": 2,
+      "anchor": 3,
+      "note": "Header VML rules and SmartArt/diagram components are also present."
+    },
+    "numbering": {
+      "abstract_numbering_definitions": 14,
+      "numbering_instances": 28,
+      "relevant_patterns": ["%1", "%1.%2", "%1.%2.%3"]
+    }
+  },
+  "sections": [
+    {
+      "section": 1,
+      "paper": "A4 portrait",
+      "size_inches": {"width": 8.27, "height": 11.69},
+      "margins_inches": {"top": 1.77, "bottom": 1.10, "left": 1.10, "right": 1.10},
+      "header_distance_pt": 42.55,
+      "footer_distance_pt": 48.2,
+      "header_linked_to_previous": false,
+      "footer_linked_to_previous": false
+    },
+    {
+      "section": 2,
+      "paper": "A4 portrait",
+      "size_inches": {"width": 8.27, "height": 11.69},
+      "margins_inches": {"top": 1.77, "bottom": 1.10, "left": 1.10, "right": 1.10},
+      "header_distance_pt": 42.55,
+      "footer_distance_pt": 48.2,
+      "header_linked_to_previous": false,
+      "footer_linked_to_previous": false
+    },
+    {
+      "section": 3,
+      "paper": "A4 portrait",
+      "size_inches": {"width": 8.27, "height": 11.69},
+      "margins_inches": {"top": 1.77, "bottom": 1.10, "left": 1.10, "right": 1.10},
+      "header_distance_pt": 42.55,
+      "footer_distance_pt": 48.2,
+      "header_linked_to_previous": true,
+      "footer_linked_to_previous": true
+    }
+  ],
+  "document_defaults": {
+    "fonts": {
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "complex_script": "Times New Roman",
+      "eastAsia": "宋体"
+    },
+    "normal_style": {
+      "size_pt": 12,
+      "alignment": "justified",
+      "line_spacing": "1.5 lines"
+    }
+  },
+  "styles": {
+    "Heading 1": {"size_pt": 16, "bold": true, "alignment": "center", "space_before_pt": 15.5, "space_after_pt": 14},
+    "Heading 2": {"size_pt": 14, "bold": true, "space_before_pt": 10, "space_after_pt": 7},
+    "Heading 3": {"size_pt_inherited": 12, "bold": true, "space_before_pt": 7, "space_after_pt": 4},
+    "Header": {"stored_size_pt": 9, "alignment": "center", "note": "Direct header formatting overrides this."},
+    "Footer": {"stored_size_pt": 9, "alignment": "left", "note": "PAGE field is visually positioned using tabs."},
+    "TOC 1": {"stored_size_pt": 10, "conflict": "Explicit prose requires 14 pt."},
+    "TOC 2": {"stored_size_pt": 10, "conflict": "Explicit prose requires 14 pt."},
+    "图表样式": {"size_pt": 10.5, "alignment": "center", "line_spacing": "single", "space_before_pt": 6, "space_after_pt": 6}
+  },
+  "header_footer": {
+    "main_header_text": "华中科技大学硕士学位论文",
+    "direct_header_format": {"font": "华文楷体", "size_pt": 16.5, "color": "FF0000"},
+    "header_rules": {"technology": "VML", "count": 2, "stroke_color": "FF0000"},
+    "explicit_prose_header_format": {"font": "楷体", "size_pt": 18},
+    "footer_number": {"field": "PAGE", "visual_placement_mechanism": "tab stops"}
+  },
+  "theme": {
+    "major_latin": "Calibri Light",
+    "minor_latin": "Calibri",
+    "major_hans": "宋体",
+    "minor_hans": "宋体",
+    "dark_text": "000000",
+    "hyperlink": "0563C1",
+    "followed_hyperlink": "954F72"
+  },
+  "settings": {
+    "default_tab_stop_twips": 420,
+    "even_and_odd_headers": false,
+    "track_revisions_enabled": false,
+    "update_fields_on_open": false
+  },
+  "known_conflicts": [
+    "CONFLICT-TOC-001",
+    "CONFLICT-EQ-001",
+    "CONFLICT-HF-001",
+    "CONFLICT-FOOTER-001"
+  ],
+  "render_dependent_unverified": [
+    "actual page count and pagination",
+    "clipping or overlap",
+    "unintended blank pages",
+    "floating-object visual centering",
+    "caption/table page separation",
+    "image readability at final size",
+    "header/footer line geometry and collision"
+  ]
+}
