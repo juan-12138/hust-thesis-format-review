@@ -1,6 +1,6 @@
 ---
 name: hust-thesis-format-review
-description: Review Microsoft Word master theses against the Huazhong University of Science and Technology science-and-engineering thesis template. Use when auditing a HUST master's thesis DOCX, explaining HUST thesis-format requirements, comparing a thesis with the bundled reference template, or preparing a commented review copy and Word audit report. The Phase 7 package evaluates all 76 rules, including figures, tables, equations, TOC, footnotes, references, special objects, language candidates, comments, and a structured report while keeping render- and meaning-dependent checks explicit.
+description: 审查华中科技大学理工科硕士学位论文 Word/DOCX 格式，并生成批注版论文、Word 审查报告和 JSON 结果。Review HUST science-and-engineering master's theses against the bundled reference template, including all 76 rules for page layout, typography, headings, abstracts, TOC, figures, tables, equations, footnotes, references, special objects, language candidates, comments, and structured reporting, while keeping render- and meaning-dependent checks explicit.
 ---
 
 # HUST Master Thesis Format Review
@@ -35,7 +35,7 @@ Read `references/phase6_api.md` before generating the report. The current `scrip
 
 Read `references/phase7_api.md` before running or extending advanced checks. `scripts/review_rules.py` now merges the Phase 4 foundation engine and `scripts/advanced_rule_engine.py` in confirmed rule order. Use the rule result's `evaluated_count` and Finding severity to explain what was checked and what still requires human judgement.
 
-Before running any Phase 3 Python command, call the Codex workspace-dependency loader and use the Python executable it returns. The parser requires `lxml`, which is included in the bundled document runtime but may be absent from the operating system's default Python. Do not silently install packages or fall back to an unverified interpreter. Verify the selected interpreter with `import lxml` when the environment has changed.
+Before running any Phase 3 Python command, select a Python 3.10+ interpreter that can import `lxml` and verify it with `python -c "import lxml"` (or the equivalent command for the selected interpreter). In Codex, prefer the workspace-dependency loader and the Python executable it returns. In Claude Code, WorkBuddy/CodeBuddy Code, or another Agent Skills client, use a trusted configured Python environment. If `lxml` is missing, explain the dependency and obtain any authorization required by the host before installing it; do not silently install packages or use an unverified interpreter.
 
 ## Rule interpretation
 
